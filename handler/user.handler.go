@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/abetobing/go-eventlistener-example/ext"
+	"github.com/abetobing/go-eventlistener-example/events"
 	"github.com/go-chi/render"
 	"github.com/go-resty/resty/v2"
 )
@@ -20,6 +20,9 @@ type User struct {
 func UserCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	start := time.Now()
+
+	ctx := r.Context()
+	userEvent := ctx.Value("user_event_ctx_key").(events.ApplicationEvent)
 
 	client := resty.New()
 
@@ -38,9 +41,11 @@ func UserCreateHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error ", err)
 	}
 
-	render.DefaultResponder(w, r, user)
+	// do the rest task later
+	defer userEvent.Publish("user_created", user)
 
-	ext.SubmitElastic(user)
+	// cause we need to serve impatient client first
+	render.DefaultResponder(w, r, user)
 
 	elapsed := time.Since(start)
 	fmt.Println("Elapsed time ", elapsed)
