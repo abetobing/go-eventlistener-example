@@ -12,7 +12,7 @@ func init() {
 	go func() {
 		for {
 			user := <-UserCreated
-			fmt.Println("user event ", user)
+			fmt.Println("User event listener, about to submit data to elasticsearch ", user)
 			ext.SubmitElastic(user)
 		}
 	}()

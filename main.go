@@ -19,6 +19,7 @@ func main() {
 	r := chi.NewRouter()
 
 	userEvent.Subscribe("user_created", listeners.UserCreated)
+	userEvent.Subscribe("user_created", listeners.SlackNotifier)
 
 	r.Use(middleware.Logger)
 	r.Route("/users", func(r chi.Router) {
