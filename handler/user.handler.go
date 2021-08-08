@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/abetobing/go-eventlistener-example/ext"
 	"github.com/go-chi/render"
 	"github.com/go-resty/resty/v2"
 )
@@ -38,6 +39,8 @@ func UserCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.DefaultResponder(w, r, user)
+
+	ext.SubmitElastic(user)
 
 	elapsed := time.Since(start)
 	fmt.Println("Elapsed time ", elapsed)
